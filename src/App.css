@@ -29,8 +29,11 @@
   color: #61dafb;
 }
 .form {
-  margin:100px auto;
-  width: 300px
+  width: 180px
+}
+.form-wrapper {
+  display: flex;
+  align-items: center;
 }
 
 @keyframes App-logo-spin {
