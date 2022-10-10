@@ -70,6 +70,24 @@ label{
   letter-spacing: 1px; 
   text-align: center;
 }
+.metric-forms{
+  margin-top: 24px;
+  display: flex;
+  padding: 0px 64px;
+}
+.metric__code--form{
+  width: 50%;
+  margin-right: 36px;
+}
+.metric__compare--form{
+  width: 25%;
+}
+.metric__value--form{
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  margin-left: 36px;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

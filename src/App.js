@@ -1,15 +1,7 @@
 import "./App.css";
 import "./App.css";
-import {
-  Header,
-  Button,
-  Container,
-  Dropdown,
-  Input,
-  Label,
-  Segment,
-} from "semantic-ui-react";
-import { useState } from "react";
+import { Container, Dropdown } from "semantic-ui-react";
+import { useState, useEffect } from "react";
 import { ReactDatez } from "react-datez";
 
 function App() {
@@ -18,6 +10,26 @@ function App() {
   const [fromDate, setFromDate] = useState("");
   const [fromHour, setFromHour] = useState();
   const [toHour, setToHour] = useState();
+  const [metricDefinitions, setMetricDefinitions] = useState([]);
+  const [metricCode, setMetricCode] = useState("");
+  const [compareType, setCompareType] = useState("");
+  const [metricValue, setMetricValue] = useState(0);
+
+  useEffect(() => {
+    getData(
+      "https://customsearchquerytoolapi.azurewebsites.net/Search/MetricDefinitions"
+    ).then((data) => {
+      setMetricDefinitions(data);
+    });
+  }, []);
+
+  const metricCodeOptions = metricDefinitions.map((m) => {
+    return {
+      key: m.metricCode,
+      value: m.metricCode,
+      text: m.alias,
+    };
+  });
 
   const options = [
     {
@@ -135,11 +147,22 @@ function App() {
     { key: 29, text: "5 am (next day)", value: 29 },
   ];
 
+  const compareTypeOptions = [
+    { key: "Equal", text: "=", value: "Equal" },
+    { key: "LessThan", text: "<", value: "LessThan" },
+    { key: "LessThanOrEqual", text: "≤", value: "LessThanOrEqual" },
+    { key: "GreaterThan", text: ">", value: "GreaterThan" },
+    { key: "GreaterThanOrEqual", text: "≥", value: "GreaterThanOrEqual" },
+  ];
+
   console.log(restaurantIds);
   console.log(fromDate);
   console.log(toDate);
   console.log(fromHour);
   console.log(toHour);
+  console.log(metricCode);
+  console.log(compareType);
+  console.log(metricValue);
 
   return (
     <Container>
@@ -149,7 +172,7 @@ function App() {
       <h2 className="landing__subtitle">Select your desired inputs</h2>
       <div className="form-wrapper">
         <div className="restaurant-form">
-        <h4 className="form-title">RESTAURANT</h4>
+          <h4 className="form-title">RESTAURANT</h4>
           <label>Restaurant Ids</label>
           <Dropdown
             fluid
@@ -164,7 +187,7 @@ function App() {
         </div>
         <div className="calendar-forms">
           <div className="form-date">
-          <h4 className="form-title">DATE</h4>
+            <h4 className="form-title">DATE</h4>
             <label>From Date</label>
             <ReactDatez
               name="fromDate"
@@ -219,9 +242,55 @@ function App() {
       </div>
       <div className="metric__title">
         <h4>METRIC CRITERIA</h4>
-      </div>      
+      </div>
+      <div className="metric-forms">
+        <div className="metric__code--form">
+          <label>Metric Code</label>
+          <Dropdown
+            fluid
+            selection
+            options={metricCodeOptions}
+            value={metricCode}
+            onChange={(event, data) => {
+              setMetricCode(data.value);
+            }}
+          />
+        </div>
+        <div className="metric__compare--form">
+          <label>Compare Type</label>
+          <Dropdown
+            fluid
+            selection
+            options={compareTypeOptions}
+            onChange={(event, data) => {
+              setCompareType(data.value);
+            }}
+          />
+        </div>
+        <div className="metric__value--form">
+          <label>Value</label>
+          <input 
+            type="number" 
+            min={0} 
+            max={99} 
+            value={metricValue}
+            onChange={(event, data) => {
+              setMetricValue(event.target.value);
+            }}
+            ></input>
+        </div>
+      </div>
     </Container>
   );
+}
+
+async function getData(url = "") {
+  const response = await fetch(url, {
+    method: "GET",
+    cache: "no-cache",
+  });
+
+  return response.json();
 }
 
 export default App;
