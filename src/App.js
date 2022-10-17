@@ -1,6 +1,6 @@
 import "./App.css";
 import "./App.css";
-import { Container, Dropdown } from "semantic-ui-react";
+import { Button, Container, Dropdown, Form, Table } from "semantic-ui-react";
 import { useState, useEffect } from "react";
 import { ReactDatez } from "react-datez";
 
@@ -170,116 +170,142 @@ function App() {
         <h1 className="title">Custom Query Search Tool</h1>
       </div>
       <h2 className="landing__subtitle">Select your desired inputs</h2>
-      <div className="form-wrapper">
-        <div className="restaurant-form">
-          <h4 className="form-title">RESTAURANT</h4>
-          <label>Restaurant Ids</label>
-          <Dropdown
-            fluid
-            multiple
-            selection
-            options={options}
-            value={restaurantIds}
-            onChange={(event, data) => {
-              setRestaurantIds(data.value);
-            }}
-          />
-        </div>
-        <div className="calendar-forms">
-          <div className="form-date">
-            <h4 className="form-title">DATE</h4>
-            <label>From Date</label>
-            <ReactDatez
-              name="fromDate"
-              handleChange={(value) => {
-                setFromDate(value);
+      <Form>
+        <div className="form-wrapper">
+          <div className="restaurant-form">
+            <h4 className="form-title">RESTAURANT</h4>
+            <label>Restaurant Ids</label>
+            <Dropdown
+              fluid
+              multiple
+              selection
+              options={options}
+              value={restaurantIds}
+              onChange={(event, data) => {
+                setRestaurantIds(data.value);
               }}
-              value={fromDate}
-              allowPast={true}
-              dateFormat={"MM/DD/YYYY"}
-              startDate={"2021-01-01"}
-              endDate={"2021-12-31"}
-              defaultMonth={"2021-01-01"}
             />
           </div>
-          <div className="form-date">
-            <label>To Date</label>
-            <ReactDatez
-              name="toDate"
-              handleChange={(value) => {
-                setToDate(value);
+          <div className="calendar-forms">
+            <div className="form-date">
+              <h4 className="form-title">DATE</h4>
+              <label>From Date</label>
+              <ReactDatez
+                name="fromDate"
+                handleChange={(value) => {
+                  setFromDate(value);
+                }}
+                value={fromDate}
+                allowPast={true}
+                dateFormat={"MM/DD/YYYY"}
+                startDate={"2021-10-01"}
+                endDate={"2021-10-31"}
+                defaultMonth={"2021-10-01"}
+              />
+            </div>
+            <div className="form-date">
+              <label>To Date</label>
+              <ReactDatez
+                name="toDate"
+                handleChange={(value) => {
+                  setToDate(value);
+                }}
+                value={toDate}
+                allowPast={true}
+                dateFormat={"MM/DD/YYYY"}
+                startDate={"2021-10-01"}
+                endDate={"2021-10-31"}
+                defaultMonth={"2021-10-01"}
+              />
+            </div>
+          </div>
+          <div className="time-forms">
+            <h4 className="form-title">TIME</h4>
+            <label>From Hour</label>
+            <Dropdown
+              fluid
+              selection
+              options={hourOptions}
+              onChange={(event, data) => {
+                setFromHour(data.value);
               }}
-              value={toDate}
-              allowPast={true}
-              dateFormat={"MM/DD/YYYY"}
-              startDate={"2021-01-01"}
-              endDate={"2021-12-31"}
-              defaultMonth={"2021-01-01"}
+            />
+            <label>To Hour</label>
+            <Dropdown
+              fluid
+              selection
+              options={hourOptions}
+              onChange={(event, data) => {
+                setToHour(data.value);
+              }}
             />
           </div>
         </div>
-        <div className="time-forms">
-          <h4 className="form-title">TIME</h4>
-          <label>From Hour</label>
-          <Dropdown
-            fluid
-            selection
-            options={hourOptions}
-            onChange={(event, data) => {
-              setFromHour(data.value);
-            }}
-          />
-          <label>To Hour</label>
-          <Dropdown
-            fluid
-            selection
-            options={hourOptions}
-            onChange={(event, data) => {
-              setToHour(data.value);
-            }}
-          />
+        <div className="metric__title">
+          <h4>METRIC CRITERIA</h4>
         </div>
-      </div>
-      <div className="metric__title">
-        <h4>METRIC CRITERIA</h4>
-      </div>
-      <div className="metric-forms">
-        <div className="metric__code--form">
-          <label>Metric Code</label>
-          <Dropdown
-            fluid
-            selection
-            options={metricCodeOptions}
-            value={metricCode}
-            onChange={(event, data) => {
-              setMetricCode(data.value);
-            }}
-          />
-        </div>
-        <div className="metric__compare--form">
-          <label>Compare Type</label>
-          <Dropdown
-            fluid
-            selection
-            options={compareTypeOptions}
-            onChange={(event, data) => {
-              setCompareType(data.value);
-            }}
-          />
-        </div>
-        <div className="metric__value--form">
-          <label>Value</label>
-          <input 
-            type="number" 
-            min={0} 
-            max={99} 
-            value={metricValue}
-            onChange={(event, data) => {
-              setMetricValue(event.target.value);
-            }}
+        <div className="metric-forms">
+          <div className="metric__code--form">
+            <label>Metric Code</label>
+            <Dropdown
+              fluid
+              selection
+              options={metricCodeOptions}
+              value={metricCode}
+              onChange={(event, data) => {
+                setMetricCode(data.value);
+              }}
+            />
+          </div>
+          <div className="metric__compare--form">
+            <label>Compare Type</label>
+            <Dropdown
+              fluid
+              selection
+              options={compareTypeOptions}
+              onChange={(event, data) => {
+                setCompareType(data.value);
+              }}
+            />
+          </div>
+          <div className="metric__value--form">
+            <label>Value</label>
+            <input
+              type="number"
+              min={0}
+              max={99}
+              value={metricValue}
+              onChange={(event, data) => {
+                setMetricValue(event.target.value);
+              }}
             ></input>
+          </div>
         </div>
+        <div className="submit__button--wrapper">
+          <Button className="submit__button" type="submit">
+            Submit
+          </Button>
+        </div>
+      </Form>
+      <div className="results__title">
+        <h4>RESULTS</h4>
       </div>
+      <Table celled>
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell>Restaurant</Table.HeaderCell>
+            <Table.HeaderCell>Business Date</Table.HeaderCell>
+            <Table.HeaderCell>Order number</Table.HeaderCell>
+            <Table.HeaderCell>Order time</Table.HeaderCell>
+            {metricDefinitions.map((md) => {
+              return <Table.HeaderCell textAlign="center">{md.alias}</Table.HeaderCell>;
+            })}
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+
+        </Table.Body>
+      </Table>
     </Container>
   );
 }

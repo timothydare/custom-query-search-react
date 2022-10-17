@@ -1,32 +1,3 @@
-
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-.App-link {
-  color: #61dafb;
-}
 label{
   font-weight: bold;
 }
@@ -41,7 +12,7 @@ label{
   text-align: center;
 }
 .form-date {
-  margin: 0px 48px;
+  margin: 0px 82px;
   margin-bottom: 8px;
   width: 180px;
 }
@@ -88,11 +59,28 @@ label{
   flex-direction: column;
   margin-left: 36px;
 }
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.submit__button--wrapper {
+  text-align: center;
+  margin-top: 24px;
+}
+.ui.button.submit__button{
+  cursor: pointer;
+  background-color: #90bdea;
+  border: none;
+  padding: 16px 40px;
+  border-radius: 50px;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  transition: all 300ms ease;
+}
+.ui.button.submit__button:hover{
+  background-color: #5d3eff;
+  color: white;
+}
+.results__title {
+    margin-top: 36px;
+    color: #90bdea;
+    letter-spacing: 1px; 
+    text-align: center;
 }
