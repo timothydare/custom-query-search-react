@@ -14,6 +14,7 @@ function App() {
   const [metricCode, setMetricCode] = useState("");
   const [compareType, setCompareType] = useState("");
   const [metricValue, setMetricValue] = useState(0);
+  const [results, setResults] = useState([]);
 
   useEffect(() => {
     getData(
@@ -22,6 +23,27 @@ function App() {
       setMetricDefinitions(data);
     });
   }, []);
+
+  const submit = () => {
+    const input = {
+        restaurantIds: restaurantIds,
+        fromDate: fromDate,
+        toDate: toDate,
+        fromHour: fromHour,
+        toHour: toHour,
+        metricCriteria: [
+          {
+            "metricCode": metricCode,
+            "compareType": compareType,
+            "value": metricValue
+          }
+        ]
+      }
+      postData("https://customsearchquerytoolapi.azurewebsites.net/Search/Query",input
+      ).then((data) => {
+        setResults(data);
+      });
+}
 
   const metricCodeOptions = metricDefinitions.map((m) => {
     return {
@@ -163,6 +185,7 @@ function App() {
   console.log(metricCode);
   console.log(compareType);
   console.log(metricValue);
+  console.log(results);
 
   return (
     <Container>
@@ -170,7 +193,7 @@ function App() {
         <h1 className="title">Custom Query Search Tool</h1>
       </div>
       <h2 className="landing__subtitle">Select your desired inputs</h2>
-      <Form>
+      <Form onSubmit={() => submit()}>
         <div className="form-wrapper">
           <div className="restaurant-form">
             <h4 className="form-title">RESTAURANT</h4>
@@ -303,7 +326,7 @@ function App() {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-
+            
         </Table.Body>
       </Table>
     </Container>
@@ -314,6 +337,19 @@ async function getData(url = "") {
   const response = await fetch(url, {
     method: "GET",
     cache: "no-cache",
+  });
+
+  return response.json();
+}
+
+async function postData(url = "", data = {}) {
+  const response = await fetch(url, {
+      method: "POST",
+      cache: "no-cache",
+      headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
   });
 
   return response.json();
