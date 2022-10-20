@@ -3,6 +3,7 @@ import "./App.css";
 import { Button, Container, Dropdown, Form, Table } from "semantic-ui-react";
 import { useState, useEffect } from "react";
 import { ReactDatez } from "react-datez";
+import React from "react";
 
 function App() {
   const [restaurantIds, setRestaurantIds] = useState([]);
@@ -26,24 +27,26 @@ function App() {
 
   const submit = () => {
     const input = {
-        restaurantIds: restaurantIds,
-        fromDate: fromDate,
-        toDate: toDate,
-        fromHour: fromHour,
-        toHour: toHour,
-        metricCriteria: [
-          {
-            "metricCode": metricCode,
-            "compareType": compareType,
-            "value": metricValue
-          }
-        ]
-      }
-      postData("https://customsearchquerytoolapi.azurewebsites.net/Search/Query",input
-      ).then((data) => {
-        setResults(data);
-      });
-}
+      restaurantIds: restaurantIds,
+      fromDate: fromDate,
+      toDate: toDate,
+      fromHour: fromHour,
+      toHour: toHour,
+      metricCriteria: [
+        {
+          metricCode: metricCode,
+          compareType: compareType,
+          value: metricValue,
+        },
+      ],
+    };
+    postData(
+      "https://customsearchquerytoolapi.azurewebsites.net/Search/Query",
+      input
+    ).then((data) => {
+      setResults(data);
+    });
+  };
 
   const metricCodeOptions = metricDefinitions.map((m) => {
     return {
@@ -296,10 +299,9 @@ function App() {
             <input
               type="number"
               min={0}
-              max={99}
               value={metricValue}
               onChange={(event, data) => {
-                setMetricValue(event.target.value);
+                setMetricValue(Number.parseInt(event.target.value));
               }}
             ></input>
           </div>
@@ -321,13 +323,43 @@ function App() {
             <Table.HeaderCell>Order number</Table.HeaderCell>
             <Table.HeaderCell>Order time</Table.HeaderCell>
             {metricDefinitions.map((md) => {
-              return <Table.HeaderCell textAlign="center">{md.alias}</Table.HeaderCell>;
+              return (
+                <Table.HeaderCell textAlign="center">
+                  {md.alias}
+                </Table.HeaderCell>
+              );
             })}
           </Table.Row>
         </Table.Header>
-        <Table.Body>
-            
-        </Table.Body>
+        {results.length === 0 ? (
+          <p className="no__results">No Results</p>
+        ) : (
+          <React.Fragment>
+            <Table.Body>
+              {results.map((d) => {
+                return (
+                  <Table.Row>
+                    <Table.Cell>{d.restaurantId}</Table.Cell>
+                    <Table.Cell>{d.busDt.slice(0, 10)}</Table.Cell>
+                    <Table.Cell>{d.orderNumber}</Table.Cell>
+                    <Table.Cell>{d.orderTime.slice(11, 16)}</Table.Cell>
+                    {metricDefinitions.map((m) => {
+                      const metricCodeName =
+                        m.metricCode.charAt(0).toLowerCase() +
+                        m.metricCode.slice(1);
+                      console.log(metricCodeName);
+                      return (
+                        <Table.Cell>
+                          {formatData(d[metricCodeName], m)}
+                        </Table.Cell>
+                      );
+                    })}
+                  </Table.Row>
+                );
+              })}
+            </Table.Body>
+          </React.Fragment>
+        )}
       </Table>
     </Container>
   );
@@ -344,15 +376,35 @@ async function getData(url = "") {
 
 async function postData(url = "", data = {}) {
   const response = await fetch(url, {
-      method: "POST",
-      cache: "no-cache",
-      headers: {
-          "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
+    method: "POST",
+    cache: "no-cache",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
   });
 
   return response.json();
+}
+
+function formatData(value, metricDefinition) {
+  let formattedValue = "";
+  
+  switch (metricDefinition.dataType) {
+      case "Money":
+          formattedValue = `$ ${value.toFixed(metricDefinition.decimalPlaces)}`;
+          break;
+
+      case "Percent":
+          formattedValue = `${value.toFixed(metricDefinition.decimalPlaces)} %`
+          break;
+
+      default:
+          formattedValue = value.toFixed(metricDefinition.decimalPlaces);
+          break;
+  }
+
+  return formattedValue;
 }
 
 export default App;

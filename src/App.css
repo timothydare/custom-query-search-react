@@ -84,3 +84,7 @@ label{
     letter-spacing: 1px; 
     text-align: center;
 }
+.no__results {
+  font-weight: 900;
+  font-size: 24px;
+}
