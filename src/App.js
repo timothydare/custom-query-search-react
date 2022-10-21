@@ -1,6 +1,6 @@
 import "./App.css";
 import "./App.css";
-import { Button, Container, Dropdown, Form, Table } from "semantic-ui-react";
+import { Button, Container, Dropdown, Form, Pagination, Table } from "semantic-ui-react";
 import { useState, useEffect } from "react";
 import { ReactDatez } from "react-datez";
 import React from "react";
@@ -16,6 +16,8 @@ function App() {
   const [compareType, setCompareType] = useState("");
   const [metricValue, setMetricValue] = useState(0);
   const [results, setResults] = useState([]);
+  const [activePage, setActivePage] = useState(1);
+
 
   useEffect(() => {
     getData(
@@ -180,6 +182,16 @@ function App() {
     { key: "GreaterThanOrEqual", text: "≥", value: "GreaterThanOrEqual" },
   ];
 
+  const handlePaginationChange = (pageNumber) => {
+    setActivePage(pageNumber);
+    console.log(pageNumber);
+  }
+
+  const indexOfLastResult = activePage * 10;
+  const indexOfFirstResult = indexOfLastResult - 10;
+  const transactionDataPaginated =  results.slice(indexOfFirstResult, indexOfLastResult);
+
+
   console.log(restaurantIds);
   console.log(fromDate);
   console.log(toDate);
@@ -336,7 +348,7 @@ function App() {
         ) : (
           <React.Fragment>
             <Table.Body>
-              {results.map((d) => {
+              {transactionDataPaginated.map((d) => {
                 return (
                   <Table.Row>
                     <Table.Cell>{d.restaurantId}</Table.Cell>
@@ -358,6 +370,17 @@ function App() {
                 );
               })}
             </Table.Body>
+            <Table.Footer>
+              <Table.Row>
+              <Table.HeaderCell colSpan='3'>
+                  <Pagination
+                    activePage={activePage}
+                    onPageChange={(event, data) => handlePaginationChange(data.activePage)}
+                    totalPages={Math.ceil(results.length / 10)}
+                  ></Pagination>
+              </Table.HeaderCell>
+              </Table.Row>
+            </Table.Footer>
           </React.Fragment>
         )}
       </Table>
