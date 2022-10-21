@@ -4,6 +4,7 @@ import { Button, Container, Dropdown, Form, Pagination, Table } from "semantic-u
 import { useState, useEffect } from "react";
 import { ReactDatez } from "react-datez";
 import React from "react";
+import Restaurant from "./RestaurantData.json";
 
 function App() {
   const [restaurantIds, setRestaurantIds] = useState([]);
@@ -58,88 +59,7 @@ function App() {
     };
   });
 
-  const options = [
-    {
-      Id: 1,
-      Name: "Restaurant 1 - Greystone",
-      Address: "8553 Greystone Street",
-      City: "Cantonment",
-      State: "FL",
-      Zipcode: "32533",
-    },
-    {
-      Id: 2,
-      Name: "Restaurant 2 - Whitemarsh",
-      Address: "9927 Whitemarsh Drive",
-      City: "Schenectady",
-      State: "NY",
-      Zipcode: "12302",
-    },
-    {
-      Id: 3,
-      Name: "Restaurant 3 - Edgewood",
-      Address: "51 Edgewood Lane",
-      City: "Shrewsbury",
-      State: "MA",
-      Zipcode: "01545",
-    },
-    {
-      Id: 4,
-      Name: "Restaurant 4 - Cedar",
-      Address: "265 Cedar Swamp St.",
-      City: "Lemont",
-      State: "IL",
-      Zipcode: "60439",
-    },
-    {
-      Id: 5,
-      Name: "Restaurant 5 - Canterbury",
-      Address: "9594 Canterbury Lane",
-      City: "Mobile",
-      State: "AL",
-      Zipcode: "36605",
-    },
-    {
-      Id: 6,
-      Name: "Restaurant 6 - Jennings",
-      Address: "7508 Jennings Circle",
-      City: "Henderson",
-      State: "KY",
-      Zipcode: "42420",
-    },
-    {
-      Id: 7,
-      Name: "Restaurant 7 - Dogwood",
-      Address: "9195 Dogwood Lane",
-      City: "Clifton Park",
-      State: "NY",
-      Zipcode: "12065",
-    },
-    {
-      Id: 8,
-      Name: "Restaurant 8 - Hamilton",
-      Address: "477B Hamilton Lane",
-      City: "Moses Lake",
-      State: "WA",
-      Zipcode: "98837",
-    },
-    {
-      Id: 9,
-      Name: "Restaurant 9 - Pleasant",
-      Address: "700 Pleasant Drive",
-      City: "Copperas Cove",
-      State: "TX",
-      Zipcode: "76522",
-    },
-    {
-      Id: 10,
-      Name: "Restaurant 10 - James",
-      Address: "8902 James Court",
-      City: "Lakewood",
-      State: "NJ",
-      Zipcode: "08701",
-    },
-  ].map((r) => {
+  const options = Restaurant.map((r) => {
     return {
       key: r.Id,
       value: r.Id,
@@ -351,7 +271,7 @@ function App() {
               {transactionDataPaginated.map((d) => {
                 return (
                   <Table.Row>
-                    <Table.Cell>{d.restaurantId}</Table.Cell>
+                    <Table.Cell>{Restaurant.find(x => x.Id === d.restaurantId).Name.slice(14)}</Table.Cell>
                     <Table.Cell>{d.busDt.slice(0, 10)}</Table.Cell>
                     <Table.Cell>{d.orderNumber}</Table.Cell>
                     <Table.Cell>{d.orderTime.slice(11, 16)}</Table.Cell>
