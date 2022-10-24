@@ -1,6 +1,13 @@
 import "./App.css";
 import "./App.css";
-import { Button, Container, Dropdown, Form, Pagination, Table } from "semantic-ui-react";
+import {
+  Button,
+  Container,
+  Dropdown,
+  Form,
+  Pagination,
+  Table,
+} from "semantic-ui-react";
 import { useState, useEffect } from "react";
 import { ReactDatez } from "react-datez";
 import React from "react";
@@ -18,7 +25,6 @@ function App() {
   const [metricValue, setMetricValue] = useState(0);
   const [results, setResults] = useState([]);
   const [activePage, setActivePage] = useState(1);
-
 
   useEffect(() => {
     getData(
@@ -105,22 +111,17 @@ function App() {
   const handlePaginationChange = (pageNumber) => {
     setActivePage(pageNumber);
     console.log(pageNumber);
-  }
+  };
 
   const indexOfLastResult = activePage * 10;
   const indexOfFirstResult = indexOfLastResult - 10;
-  const transactionDataPaginated =  results.slice(indexOfFirstResult, indexOfLastResult);
+  const transactionDataPaginated = results.slice(
+    indexOfFirstResult,
+    indexOfLastResult
+  );
 
-
-  console.log(restaurantIds);
-  console.log(fromDate);
-  console.log(toDate);
-  console.log(fromHour);
-  console.log(toHour);
-  console.log(metricCode);
-  console.log(compareType);
-  console.log(metricValue);
   console.log(results);
+  console.log(transactionDataPaginated);
 
   return (
     <Container>
@@ -247,31 +248,54 @@ function App() {
       <div className="results__title">
         <h4>RESULTS</h4>
       </div>
-      <Table celled>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>Restaurant</Table.HeaderCell>
-            <Table.HeaderCell>Business Date</Table.HeaderCell>
-            <Table.HeaderCell>Order number</Table.HeaderCell>
-            <Table.HeaderCell>Order time</Table.HeaderCell>
-            {metricDefinitions.map((md) => {
-              return (
-                <Table.HeaderCell textAlign="center">
-                  {md.alias}
-                </Table.HeaderCell>
-              );
-            })}
-          </Table.Row>
-        </Table.Header>
-        {results.length === 0 ? (
+      {results.length === 0 ? (
+        <React.Fragment>
+          <Table celled>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Restaurant</Table.HeaderCell>
+                <Table.HeaderCell>Business Date</Table.HeaderCell>
+                <Table.HeaderCell>Order number</Table.HeaderCell>
+                <Table.HeaderCell>Order time</Table.HeaderCell>
+                {metricDefinitions.map((md) => {
+                  return (
+                    <Table.HeaderCell textAlign="center">
+                      {md.alias}
+                    </Table.HeaderCell>
+                  );
+                })}
+              </Table.Row>
+            </Table.Header>
+          </Table>
           <p className="no__results">No Results</p>
-        ) : (
+        </React.Fragment>
+      ) : (
+        <Table celled>
+          <Table.Header>
+            <Table.Row>
+              <Table.HeaderCell>Restaurant</Table.HeaderCell>
+              <Table.HeaderCell>Business Date</Table.HeaderCell>
+              <Table.HeaderCell>Order number</Table.HeaderCell>
+              <Table.HeaderCell>Order time</Table.HeaderCell>
+              {metricDefinitions.map((md) => {
+                return (
+                  <Table.HeaderCell textAlign="center">
+                    {md.alias}
+                  </Table.HeaderCell>
+                );
+              })}
+            </Table.Row>
+          </Table.Header>
           <React.Fragment>
             <Table.Body>
               {transactionDataPaginated.map((d) => {
                 return (
                   <Table.Row>
-                    <Table.Cell>{Restaurant.find(x => x.Id === d.restaurantId).Name.slice(14)}</Table.Cell>
+                    <Table.Cell>
+                      {Restaurant.find(
+                        (x) => x.Id === d.restaurantId
+                      ).Name.slice(14)}
+                    </Table.Cell>
                     <Table.Cell>{d.busDt.slice(0, 10)}</Table.Cell>
                     <Table.Cell>{d.orderNumber}</Table.Cell>
                     <Table.Cell>{d.orderTime.slice(11, 16)}</Table.Cell>
@@ -281,7 +305,7 @@ function App() {
                         m.metricCode.slice(1);
                       console.log(metricCodeName);
                       return (
-                        <Table.Cell>
+                        <Table.Cell textAlign="center">
                           {formatData(d[metricCodeName], m)}
                         </Table.Cell>
                       );
@@ -292,18 +316,22 @@ function App() {
             </Table.Body>
             <Table.Footer>
               <Table.Row>
-              <Table.HeaderCell colSpan='3'>
-                  <Pagination
-                    activePage={activePage}
-                    onPageChange={(event, data) => handlePaginationChange(data.activePage)}
-                    totalPages={Math.ceil(results.length / 10)}
-                  ></Pagination>
-              </Table.HeaderCell>
+                <Table.HeaderCell colSpan="12">
+                    <Pagination 
+                      floated='right'
+                      className="table__pagination"
+                      activePage={activePage}
+                      onPageChange={(event, data) =>
+                        handlePaginationChange(data.activePage)
+                      }
+                      totalPages={Math.ceil(results.length / 10)}
+                    ></Pagination>
+                </Table.HeaderCell>
               </Table.Row>
             </Table.Footer>
           </React.Fragment>
-        )}
-      </Table>
+        </Table>
+      )}
     </Container>
   );
 }
@@ -332,19 +360,19 @@ async function postData(url = "", data = {}) {
 
 function formatData(value, metricDefinition) {
   let formattedValue = "";
-  
+
   switch (metricDefinition.dataType) {
-      case "Money":
-          formattedValue = `$ ${value.toFixed(metricDefinition.decimalPlaces)}`;
-          break;
+    case "Money":
+      formattedValue = `$ ${value.toFixed(metricDefinition.decimalPlaces)}`;
+      break;
 
-      case "Percent":
-          formattedValue = `${value.toFixed(metricDefinition.decimalPlaces)} %`
-          break;
+    case "Percent":
+      formattedValue = `${value.toFixed(metricDefinition.decimalPlaces)} %`;
+      break;
 
-      default:
-          formattedValue = value.toFixed(metricDefinition.decimalPlaces);
-          break;
+    default:
+      formattedValue = value.toFixed(metricDefinition.decimalPlaces);
+      break;
   }
 
   return formattedValue;

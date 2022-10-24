@@ -79,12 +79,16 @@ label{
   color: white;
 }
 .results__title {
-    margin-top: 36px;
+    margin: 36px 0px;
     color: #90bdea;
     letter-spacing: 1px; 
     text-align: center;
 }
 .no__results {
   font-weight: 900;
-  font-size: 18px;
+  font-size: 32px;
+  text-align: center;
+}
+.ui.pagination.table__pagination{
+  
 }
