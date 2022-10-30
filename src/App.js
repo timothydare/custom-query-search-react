@@ -19,8 +19,6 @@ function App() {
   const [fromDate, setFromDate] = useState("");
   const [fromHour, setFromHour] = useState();
   const [toHour, setToHour] = useState();
-  const [compareType, setCompareType] = useState("");
-  const [metricValue, setMetricValue] = useState(0);
   const [metricDefinitions, setMetricDefinitions] = useState([]);
   const [results, setResults] = useState([]);
   const [activePage, setActivePage] = useState(1);
@@ -113,13 +111,6 @@ function App() {
     console.log(pageNumber);
   };
 
-  const indexOfLastResult = activePage * 10;
-  const indexOfFirstResult = indexOfLastResult - 10;
-  const transactionDataPaginated = results.slice(
-    indexOfFirstResult,
-    indexOfLastResult
-  );
-
   const handleCriteriaAdd = () => {
     setmetricCriteria([
       ...metricCriteria,
@@ -137,16 +128,18 @@ function App() {
     setmetricCriteria(newArray);
   };
 
-  const handleMetricCodeChange = (property, index, value) => {
+  const handleMetricCriteriaChange = (property, index, value) => {
     const newArray = [...metricCriteria];
     newArray[index][property] = value;
     setmetricCriteria(newArray);
   };
-  const handleMetricValueChange = (property, index, value) => {
-    const newArray = [...metricCriteria];
-    newArray[index][property] = value;
-    setmetricCriteria(newArray);
-  };
+  
+  const indexOfLastResult = activePage * 10;
+  const indexOfFirstResult = indexOfLastResult - 10;
+  const transactionDataPaginated = results.slice(
+    indexOfFirstResult,
+    indexOfLastResult
+  );
 
   console.log(results);
   console.log(metricDefinitions);
@@ -242,8 +235,12 @@ function App() {
                   selection
                   options={metricCodeOptions}
                   value={mc.metricCode}
-                  onChange={(e) =>
-                    handleMetricCodeChange("metricCode", index, e.target.value)
+                  onChange={(e, data) =>
+                    handleMetricCriteriaChange(
+                      "metricCode",
+                      index,
+                      data.value
+                    )
                   }
                 />
               </div>
@@ -254,9 +251,13 @@ function App() {
                   selection
                   options={compareTypeOptions}
                   value={mc.compareType}
-                  onChange={(event, data) => {
-                    setCompareType(data.value);
-                  }}
+                  onChange={(e, data) =>
+                    handleMetricCriteriaChange(
+                      "compareType",
+                      index,
+                      data.value
+                    )
+                  }
                 />
               </div>
               <div className="metric__value--form">
@@ -264,13 +265,12 @@ function App() {
                 <input
                   name="value"
                   type="number"
-                  min={0}
                   value={mc.value}
                   onChange={(e) =>
-                    handleMetricValueChange(
+                    handleMetricCriteriaChange(
                       e.target.name,
                       index,
-                      e.target.value
+                      Number.parseInt(e.target.value)
                     )
                   }
                 ></input>
@@ -345,7 +345,7 @@ function App() {
             </Table.Row>
           </Table.Header>
           <React.Fragment>
-            <Table.Body>
+            <Table.Body> 
               {transactionDataPaginated.map((d) => {
                 return (
                   <Table.Row>
