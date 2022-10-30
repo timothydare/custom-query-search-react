@@ -19,12 +19,18 @@ function App() {
   const [fromDate, setFromDate] = useState("");
   const [fromHour, setFromHour] = useState();
   const [toHour, setToHour] = useState();
-  const [metricDefinitions, setMetricDefinitions] = useState([]);
-  const [metricCode, setMetricCode] = useState("");
   const [compareType, setCompareType] = useState("");
   const [metricValue, setMetricValue] = useState(0);
+  const [metricDefinitions, setMetricDefinitions] = useState([]);
   const [results, setResults] = useState([]);
   const [activePage, setActivePage] = useState(1);
+  const [metricCriteria, setmetricCriteria] = useState([
+    {
+      metricCode: "",
+      compareType: "",
+      value: 0,
+    },
+  ]);
 
   useEffect(() => {
     getData(
@@ -41,13 +47,7 @@ function App() {
       toDate: toDate,
       fromHour: fromHour,
       toHour: toHour,
-      metricCriteria: [
-        {
-          metricCode: metricCode,
-          compareType: compareType,
-          value: metricValue,
-        },
-      ],
+      metricCriteria: metricCriteria,
     };
     postData(
       "https://customsearchquerytoolapi.azurewebsites.net/Search/Query",
@@ -120,13 +120,42 @@ function App() {
     indexOfLastResult
   );
 
+  const handleCriteriaAdd = () => {
+    setmetricCriteria([
+      ...metricCriteria,
+      {
+        metricCode: "",
+        compareType: "",
+        value: 0,
+      },
+    ]);
+  };
+
+  const handleCriteriaRemove = (index) => {
+    const newArray = [...metricCriteria];
+    newArray.splice(index, 1);
+    setmetricCriteria(newArray);
+  };
+
+  const handleMetricCodeChange = (property, index, value) => {
+    const newArray = [...metricCriteria];
+    newArray[index][property] = value;
+    setmetricCriteria(newArray);
+  };
+  const handleMetricValueChange = (property, index, value) => {
+    const newArray = [...metricCriteria];
+    newArray[index][property] = value;
+    setmetricCriteria(newArray);
+  };
+
   console.log(results);
-  console.log(transactionDataPaginated);
+  console.log(metricDefinitions);
+  console.log(metricCriteria);
 
   return (
     <Container>
       <div className="landing__title">
-        <h1 className="title">Custom Query Search Tool</h1>
+        <h1 className="title">Delaget Custom Query Search Tool</h1>
       </div>
       <h2 className="landing__subtitle">Select your desired inputs</h2>
       <Form onSubmit={() => submit()}>
@@ -203,42 +232,71 @@ function App() {
         <div className="metric__title">
           <h4>METRIC CRITERIA</h4>
         </div>
-        <div className="metric-forms">
-          <div className="metric__code--form">
-            <label>Metric Code</label>
-            <Dropdown
-              fluid
-              selection
-              options={metricCodeOptions}
-              value={metricCode}
-              onChange={(event, data) => {
-                setMetricCode(data.value);
-              }}
-            />
-          </div>
-          <div className="metric__compare--form">
-            <label>Compare Type</label>
-            <Dropdown
-              fluid
-              selection
-              options={compareTypeOptions}
-              onChange={(event, data) => {
-                setCompareType(data.value);
-              }}
-            />
-          </div>
-          <div className="metric__value--form">
-            <label>Value</label>
-            <input
-              type="number"
-              min={0}
-              value={metricValue}
-              onChange={(event, data) => {
-                setMetricValue(Number.parseInt(event.target.value));
-              }}
-            ></input>
-          </div>
-        </div>
+        {metricCriteria.map((mc, index) => (
+          <>
+            <div key={index} className="metric-forms">
+              <div className="metric__code--form">
+                <label>Metric Code</label>
+                <Dropdown
+                  fluid
+                  selection
+                  options={metricCodeOptions}
+                  value={mc.metricCode}
+                  onChange={(e) =>
+                    handleMetricCodeChange("metricCode", index, e.target.value)
+                  }
+                />
+              </div>
+              <div className="metric__compare--form">
+                <label>Compare Type</label>
+                <Dropdown
+                  fluid
+                  selection
+                  options={compareTypeOptions}
+                  value={mc.compareType}
+                  onChange={(event, data) => {
+                    setCompareType(data.value);
+                  }}
+                />
+              </div>
+              <div className="metric__value--form">
+                <label>Value</label>
+                <input
+                  name="value"
+                  type="number"
+                  min={0}
+                  value={mc.value}
+                  onChange={(e) =>
+                    handleMetricValueChange(
+                      e.target.name,
+                      index,
+                      e.target.value
+                    )
+                  }
+                ></input>
+              </div>
+              {metricCriteria.length > 1 && (
+                <Button 
+                  type="button"
+                  className="remove__criteria--button"
+                  onClick={() => handleCriteriaRemove(index)}
+                >
+                  Remove Criteria
+                </Button>
+              )}
+            </div>
+            {metricCriteria.length - 1 === index && metricCriteria.length < 5 && (
+              <div className="remove__button--wrapper">
+                <Button
+                  className="add__criteria--button"
+                  onClick={handleCriteriaAdd}
+                >
+                  Add Criteria
+                </Button>
+              </div>
+            )}
+          </>
+        ))}
         <div className="submit__button--wrapper">
           <Button className="submit__button" type="submit">
             Submit
@@ -317,15 +375,15 @@ function App() {
             <Table.Footer>
               <Table.Row>
                 <Table.HeaderCell colSpan="12">
-                    <Pagination 
-                      floated='right'
-                      className="table__pagination"
-                      activePage={activePage}
-                      onPageChange={(event, data) =>
-                        handlePaginationChange(data.activePage)
-                      }
-                      totalPages={Math.ceil(results.length / 10)}
-                    ></Pagination>
+                  <Pagination
+                    floated="right"
+                    className="table__pagination"
+                    activePage={activePage}
+                    onPageChange={(event, data) =>
+                      handlePaginationChange(data.activePage)
+                    }
+                    totalPages={Math.ceil(results.length / 10)}
+                  ></Pagination>
                 </Table.HeaderCell>
               </Table.Row>
             </Table.Footer>
